@@ -1,5 +1,5 @@
 # import os  # from os import getenv
-from sqlalchemy.sql.expression import desc
+from sqlalchemy.sql.expression import bindparam, desc
 from sqlalchemy.sql import text
 
 # from sqlalchemy.sql.sqltypes import VARCHAR
@@ -118,27 +118,6 @@ async def root():
     return "Welcome world"
 
 
-@app.get(
-    "/api/v1/records",
-    status_code=status.HTTP_200_OK,
-    response_model=List[SchemaRecord],
-)
-def get_records(
-    db: Session = Depends(get_db),
-    page: int = 0,
-    limit: int = 100,
-    api_key: APIKey = Depends(get_api_key),
-):
-
-    return (
-        db.query(ModelsRecord)
-        .order_by((ModelsRecord.created).desc())
-        .offset(page * limit)
-        .limit(limit)
-        .all()
-    )
-
-
 @app.post(
     "/api/v1/records",
     status_code=status.HTTP_201_CREATED,
@@ -175,11 +154,11 @@ def create_record(
 
 
 @app.get(
-    "/api/v1/something",
+    "/api/v1/records",
     status_code=status.HTTP_200_OK,
     response_model=List[SchemaRecordReturn],
 )
-def get_records_again(
+def get_records(
     db: Session = Depends(get_db),
     page: int = 0,
     limit: int = 100,
@@ -218,6 +197,38 @@ def get_records_again(
         statement += " and amount < :to_amount"
         count_statement += " and amount < :to_amount"
         params["to_amount"] = to_amount
+
+    if stores != None:
+        query_parameters = {}
+        counter = 1
+        stores_array = stores.split(",")
+        for store in stores_array:
+            query_parameters["store" + str(counter)] = store
+            counter += 1
+
+        statement += (
+            " and store IN(:" + ",:".join(query_parameters.keys()) + ")"
+        )
+        count_statement += (
+            " and store IN(:" + ",:".join(query_parameters.keys()) + ")"
+        )
+        params.update(query_parameters)
+
+    if categories != None:
+        query_parameters = {}
+        counter = 1
+        categories_array = categories.split(",")
+        for category in categories_array:
+            query_parameters["category" + str(counter)] = category
+            counter += 1
+
+        statement += (
+            " and category IN(:" + ",:".join(query_parameters.keys()) + ")"
+        )
+        count_statement += (
+            " and category IN(:" + ",:".join(query_parameters.keys()) + ")"
+        )
+        params.update(query_parameters)
 
     if weekly_expenses != None:
         statement += " and weeklyexpense = :weekly_expense"
