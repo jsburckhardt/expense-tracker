@@ -1,4 +1,4 @@
-package cmd
+package endpoint
 
 import (
 	"context"
@@ -6,42 +6,18 @@ import (
 	"time"
 
 	"github.com/gofiber/fiber/v2"
-
-	"github.com/spf13/cobra"
-
+	"github.com/jsburckhardt/expense-tracker/internal/entity"
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-
-	"github.com/jsburckhardt/expense-tracker/internal/entity"
 )
 
-// serverCmd represents the server command
-var serverCmd = &cobra.Command{
-	Use:   "server",
-	Short: "Start expense-tracker api",
-	Run: func(cmd *cobra.Command, args []string) {
-
-		app := fiber.New()
-
-		app.Get("/expenses", func(c *fiber.Ctx) error {
-			data := getExpenses()
-			return c.Status(fiber.StatusOK).JSON(fiber.Map{
-				"data":    data,
-				"success": true,
-			})
-		})
-
-		app.Listen(":3000")
-	},
-}
-
-func init() {
-	rootCmd.AddCommand(serverCmd)
-}
-
-type Expense struct {
-	Details bson.M `bson:"someNumber"`
+func Expenses(c *fiber.Ctx) error {
+	data := getExpenses()
+	return c.Status(fiber.StatusOK).JSON(fiber.Map{
+		"data":    data,
+		"success": true,
+	})
 }
 
 func getExpenses() []entity.Expense {
