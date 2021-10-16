@@ -1,2 +1,2 @@
-###
+### Get expenses
 GET http://localhost:3000/expenses
