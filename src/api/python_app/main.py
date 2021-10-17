@@ -135,19 +135,6 @@ def delete_records(
     return {}
 
 
-# def create_record(
-#     records: List[schemas.SchemaRecord],
-#     db: Session = Depends(get_db),
-#     api_key: APIKey = Depends(get_api_key),
-# ):
-#     list_of_records = []
-#     for record in records:
-#         list_of_records.append(models.ModelsRecord(**record.dict()))
-
-#     db.bulk_save_objects(list_of_records)
-#     return records
-
-
 @app.get(
     "/api/v1/summary",
     status_code=status.HTTP_200_OK,
@@ -180,4 +167,42 @@ def get_summary(
         stores,
         categories,
         weekly_expenses,
+    )
+
+
+@app.get(
+    "/api/v1/categories",
+    status_code=status.HTTP_200_OK,
+    response_model=List[str],
+    tags=["Categories"],
+)
+def get_categories(
+    db: Session = Depends(get_db),
+    page: int = 0,
+    limit: int = 100,
+    api_key: APIKey = Depends(get_api_key),
+):
+    return crud.get_categories(
+        db,
+        page,
+        limit,
+    )
+
+
+@app.get(
+    "/api/v1/stores",
+    status_code=status.HTTP_200_OK,
+    response_model=List[str],
+    tags=["Stores"],
+)
+def get_stores(
+    db: Session = Depends(get_db),
+    page: int = 0,
+    limit: int = 100,
+    api_key: APIKey = Depends(get_api_key),
+):
+    return crud.get_stores(
+        db,
+        page,
+        limit,
     )

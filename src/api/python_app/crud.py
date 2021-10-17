@@ -156,3 +156,51 @@ def get_summary(
     df = pd.DataFrame(records.all(), columns=cols)
     dfs = df[["created", "amount"]]
     return dfs.groupby("created").sum().to_dict()
+
+
+def get_categories(
+    db: Session,
+    page: int,
+    limit: int,
+):
+    statement = "SELECT * FROM categories WHERE 1 = 1"
+    count_statement = (
+        "SELECT COUNT(*) AS categories_count FROM categories WHERE 1 = 1"
+    )
+    params = {}
+    results = []
+
+    statement += " ORDER BY categoryName OFFSET :offset rows fetch next :limit rows only"
+    params["offset"] = page * limit
+    params["limit"] = limit
+
+    categories = db.execute(statement, params)
+
+    for category in categories:
+        results.append(category["categoryName"])
+
+    return results
+
+
+def get_stores(
+    db: Session,
+    page: int,
+    limit: int,
+):
+    statement = "SELECT * FROM stores WHERE 1 = 1"
+    count_statement = "SELECT COUNT(*) AS stores_count FROM stores WHERE 1 = 1"
+    params = {}
+    results = []
+
+    statement += (
+        " ORDER BY storeName OFFSET :offset rows fetch next :limit rows only"
+    )
+    params["offset"] = page * limit
+    params["limit"] = limit
+
+    stores = db.execute(statement, params)
+
+    for store in stores:
+        results.append(store["storeName"])
+
+    return results
