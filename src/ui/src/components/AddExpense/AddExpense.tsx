@@ -14,63 +14,70 @@ function AddExpense() {
     <div className="App">
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
-          <label htmlFor="firstName">First Name</label>
-          <input placeholder="bill" {...register("firstName")} />
-        </div>
-
-        <div>
-          <label htmlFor="lastName">Last Name</label>
-          <input placeholder="luo" {...register("lastName")} />
-        </div>
-
-        <div>
-          <label htmlFor="isDeveloper">Is an developer?</label>
-          <input
-            type="checkbox"
-            placeholder="luo"
-            value="yes"
-            {...register("isDeveloper")}
+          <label htmlFor="expense-date">Expense date</label>
+          <Controller
+            control={control}
+            name='date-input'
+            render={({ field }) => (
+              <ReactDatePicker
+                placeholderText='Select date'
+                onChange={(date: any) => field.onChange(date)}
+                selected={field.value}
+              />
+          )}
           />
         </div>
         <div>
-          <label htmlFor="expense-date">Expense date</label>
-        <Controller
-          control={control}
-          name='date-input'
-          render={({ field }) => (
-            <ReactDatePicker
-              placeholderText='Select date'
-              onChange={(date: any) => field.onChange(date)}
-              selected={field.value}
-            />
-        )}
-        />
+          <label htmlFor="isWeeklyExpense">Is a weekly expense?</label>
+          <input
+            type="checkbox"
+            value="yes"
+            {...register("isWeeklyExpense")}
+          />
         </div>
         <div>
           <label htmlFor="expense-category">Expense category</label>
-        <Controller
-          render={({ field }) => (
-            <ReactSelect
-              {...field}
-              options={[
-                { value: "chocolate", label: "Chocolate" },
-                { value: "strawberry", label: "Strawberry" },
-                { value: "vanilla", label: "Vanilla" }
-              ]}
-              isClearable
-            />
-          )}
-          name="ReactSelect"
-          control={control}
-        />
+          <Controller
+            render={({ field }) => (
+              <ReactSelect
+                {...field}
+                options={[
+                  { value: "chocolate", label: "Chocolate" },
+                  { value: "strawberry", label: "Strawberry" },
+                  { value: "vanilla", label: "Vanilla" }
+                ]}
+                isClearable
+              />
+            )}
+            name="ReactSelect"
+            control={control}
+          />
         </div>
         <div>
-          <label htmlFor="email">Email</label>
-          <input
-            placeholder="bluebill1049@hotmail.com"
-            type="email"
-            {...register("email")}
+          <label htmlFor="expense-store">Expense store</label>
+          <Controller
+            render={({ field }) => (
+              <ReactSelect
+                {...field}
+                options={[
+                  { value: "chocolate", label: "Chocolate" },
+                  { value: "strawberry", label: "Strawberry" },
+                  { value: "vanilla", label: "Vanilla" }
+                ]}
+                isClearable
+              />
+            )}
+            name="ReactSelect"
+            control={control}
           />
+        </div>
+        <div>
+          <label htmlFor="Amount">Amount</label>
+          <input type="number" placeholder="Amount" {...register("Amount", {required: true})} />
+        </div>
+        <div>
+          <label htmlFor="Description">Description</label>
+          <textarea {...register("Description", {required: true})} />
         </div>
         <input type="submit" />
       </form>
